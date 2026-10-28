@@ -713,6 +713,8 @@ namespace Harp.Generators.Tests
             ComplexConfigurationPayload result;
             result.PwmPort = (PwmPort)payload[0];
             result.Invert = payload[1] != 0;
+            result.InputFlags = (PortDigitalIOS)(byte)(payload[2] & 0xF);
+            result.OutputFlags = (PortDigitalIOS)payload[3];
             result.DutyCycle = PayloadMarshal.ReadSingle(payload, 4);
             result.Frequency = PayloadMarshal.ReadSingle(payload, 8);
             result.EventsEnabled = payload[12] != 0;
@@ -726,6 +728,8 @@ namespace Harp.Generators.Tests
             result = new byte[17];
             result[0] = (byte)value.PwmPort;
             result[1] = (byte)(value.Invert ? 1 : 0);
+            result[2] = (byte)((byte)value.InputFlags & 0xF);
+            result[3] = (byte)value.OutputFlags;
             PayloadMarshal.Write(result, 4, value.DutyCycle);
             PayloadMarshal.Write(result, 8, value.Frequency);
             result[12] = (byte)(value.EventsEnabled ? 1 : 0);
@@ -2841,13 +2845,25 @@ namespace Harp.Generators.Tests
         /// Gets or sets a value to write on payload member PwmPort.
         /// </summary>
         [Description("")]
-        public PwmPort PwmPort { get; set; }
+        public PwmPort PwmPort { get; set; } = PwmPort.Pwm1;
 
         /// <summary>
         /// Gets or sets a value to write on payload member Invert.
         /// </summary>
         [Description("")]
         public bool Invert { get; set; } = true;
+
+        /// <summary>
+        /// Gets or sets a value to write on payload member InputFlags.
+        /// </summary>
+        [Description("")]
+        public PortDigitalIOS InputFlags { get; set; } = PortDigitalIOS.DIO0 | PortDigitalIOS.DIO1;
+
+        /// <summary>
+        /// Gets or sets a value to write on payload member OutputFlags.
+        /// </summary>
+        [Description("")]
+        public PortDigitalIOS OutputFlags { get; set; } = (PortDigitalIOS)19;
 
         /// <summary>
         /// Gets or sets a value to write on payload member DutyCycle.
@@ -2882,6 +2898,8 @@ namespace Harp.Generators.Tests
             ComplexConfigurationPayload value;
             value.PwmPort = PwmPort;
             value.Invert = Invert;
+            value.InputFlags = InputFlags;
+            value.OutputFlags = OutputFlags;
             value.DutyCycle = DutyCycle;
             value.Frequency = Frequency;
             value.EventsEnabled = EventsEnabled;
@@ -3304,7 +3322,7 @@ namespace Harp.Generators.Tests
         /// Gets or sets the value for register PortDIOSet.
         /// </summary>
         [Description("The value for register PortDIOSet.")]
-        public PortDigitalIOS PortDIOSet { get; set; }
+        public PortDigitalIOS PortDIOSet { get; set; } = PortDigitalIOS.DIO0 | PortDigitalIOS.DIO1;
 
         /// <summary>
         /// Creates a message payload for the PortDIOSet register.
@@ -4045,6 +4063,8 @@ namespace Harp.Generators.Tests
         /// </summary>
         /// <param name="pwmPort"></param>
         /// <param name="invert"></param>
+        /// <param name="inputFlags"></param>
+        /// <param name="outputFlags"></param>
         /// <param name="dutyCycle"></param>
         /// <param name="frequency"></param>
         /// <param name="eventsEnabled"></param>
@@ -4052,6 +4072,8 @@ namespace Harp.Generators.Tests
         public ComplexConfigurationPayload(
             PwmPort pwmPort,
             bool invert,
+            PortDigitalIOS inputFlags,
+            PortDigitalIOS outputFlags,
             float dutyCycle,
             float frequency,
             bool eventsEnabled,
@@ -4059,6 +4081,8 @@ namespace Harp.Generators.Tests
         {
             PwmPort = pwmPort;
             Invert = invert;
+            InputFlags = inputFlags;
+            OutputFlags = outputFlags;
             DutyCycle = dutyCycle;
             Frequency = frequency;
             EventsEnabled = eventsEnabled;
@@ -4074,6 +4098,16 @@ namespace Harp.Generators.Tests
         /// 
         /// </summary>
         public bool Invert;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public PortDigitalIOS InputFlags;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public PortDigitalIOS OutputFlags;
 
         /// <summary>
         /// 
@@ -4108,6 +4142,8 @@ namespace Harp.Generators.Tests
             return "ComplexConfigurationPayload { " +
                 "PwmPort = " + PwmPort + ", " +
                 "Invert = " + Invert + ", " +
+                "InputFlags = " + InputFlags + ", " +
+                "OutputFlags = " + OutputFlags + ", " +
                 "DutyCycle = " + DutyCycle + ", " +
                 "Frequency = " + Frequency + ", " +
                 "EventsEnabled = " + EventsEnabled + ", " +

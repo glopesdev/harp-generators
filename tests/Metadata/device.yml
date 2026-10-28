@@ -31,10 +31,20 @@ registers:
       PwmPort:
         offset: 0
         maskType: PwmPort
+        defaultValue: 2
       Invert:
         offset: 1
         defaultValue: 1
         interfaceType: bool
+      InputFlags:
+        offset: 2
+        mask: 0xF
+        maskType: PortDigitalIOS
+        defaultValue: 3
+      OutputFlags:
+        offset: 3
+        maskType: PortDigitalIOS
+        defaultValue: 19
       DutyCycle:
         offset: 4
         length: 4
@@ -123,6 +133,7 @@ registers:
     type: U8
     access: Write
     maskType: PortDigitalIOS
+    defaultValue: 3
   PulseDOPort0: &pulseDO
     address: 42
     type: U16
